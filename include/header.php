@@ -13,24 +13,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-    <style>
-        
-            
-            #demo{position:relative;
-                width:1000px;
-                height:500px;
-                margin-left:auto;
-                margin-right:auto;
-                margin-bottom:30px;
-                padding:50px;
-
-            }
-            #about{
-                padding-top:20px;
-            }
-            
-           
-    </style>
+   
 </head>
 <body>
     <div class="jumbotron text-center" style="margin-bottom:0">

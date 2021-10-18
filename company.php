@@ -38,6 +38,14 @@
 
                     <div class="table-responsive">
                         <table class=" table table-bordered table-hover">
+                        <?php 
+                        include('dbcon.php');
+
+                        $query="SELECT * FROM company";
+                        $query_run=mysqli_query($con,$query);
+                        $query_run_count=mysqli_num_rows($query_run);
+                        if($query_run_count > 0)
+                        {   ?>
                         <thead class="thead-dark">
                             <tr >
                             
@@ -54,21 +62,12 @@
                                 <th scope="col">Venue</th>
                                 <th scope="col">Number of Registered Candidates</th>
                                 <th scope="col">Last date to apply online</th>
-
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
-                                include('dbcon.php');
-
-                                $query="SELECT * FROM company";
-                                $query_run=mysqli_query($con,$query);
-                                $query_run_count=mysqli_num_rows($query_run);
-                                if($query_run_count > 0)
-                                {
-                                    foreach($query_run as $row)
-                                    {
-                                       ?>
+                            <?php foreach($query_run as $row)
+                                    {?>
                                        <tr>
                                             <td><?php echo $row['sl_no'];?></td>
                                        
@@ -97,12 +96,17 @@
 
                                             
                                             <td><?php echo $row['lda'];?></td>
+                                            <td>
+                                                
+                                                <form action="companycode.php" method="POST">
+                                                    <input type="hidden" value="<?php echo $row['sl_no'];?>" name ="delete_id">
+                                                    <input type="hidden" value="<?php echo $row['name'];?>" name ="delete_name">
+                                                    <button type="submit" class="btn btn-sm btn-danger" name="delete_company">Delete</button>
+                                                </form>
+                                            </td>
 
                                             
-                                            <!-- <td>
-                                                <a href="registered-edit.php?user_id=<?php echo $row['sl_no']; ?>" class="btn btn-sm btn-info" >Edit &nbsp;</a>
-                                                <button type="button" value="<?php echo $row['sl_no']; ?>" data-toggle="modal" data-target="#DeleteModal" class="btn btn-sm btn-danger deletebtn" >Delete</button>
-                                            </td> -->
+                                            
                                        
                                        </tr>
 
@@ -223,31 +227,7 @@
     </div>
 
     
-    <!-- Delete Admin -->
-    <div class="modal fade" id="DeleteModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-warning">
-                    <h5 class="modal-title " id="exampleModalLabel">Delete Admin??!!</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="admincode.php" method="POST">
-                                
-                    <input type="hidden" name ="delete_id" class="delete_admin_id" >
-                    <div class="modal-body">
-                            <h5>Are You Sure You Want To Delete?</h5>
-                    </div>    
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger" name="delete_admin">Delete Admin</button>
-                    </div>
-                </form>  
-            </div>
-        </div>
-    </div>
-
+    
     <!-- script to show/hide password  -->
     <script>
     function Toggle() {
@@ -261,32 +241,6 @@
     }
     </script> 
 
-
-    <!-- script to pass sl_no of student to delete  -->
-
-    <script>
-        $(document).ready(function(){
-            $('.deletebtn1').click(function (e){
-                e.preventDefault();
-                var user_id=$(this).val();
-                $('.delete_admin_id').val(user_id);
-                $('#DeleteModal').modal('show');
-            })
-        })
-    </script> 
-
-    <!-- script to pass sl_no of admin to delete  -->
-
-    <script>
-        $(document).ready(function(){
-            $('.deletebtn').click(function (e){
-                e.preventDefault();
-                var user_id=$(this).val();
-                $('.delete_user_id').val(user_id);
-                $('#DeleteModal').modal('show');
-            })
-        })
-    </script> 
     <br>
     <br>
     <br>

@@ -13,6 +13,8 @@
                         <a class="navbar-brand" href="https://tint.edu.in/" target="_blank" class="img-thumbnail">
                             <img src="tintlogo.jpg" alt="logo" style="width:40px">&nbsp;<span>Department of Information Technology</span>
                         </a>
+                        <br>
+                        <br>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
                             <span class="navbar-toggler-icon"></span>
                         </button>   
@@ -60,10 +62,10 @@
                                          Some Work
                                     </a>
                                     <div class="dropdown-menu bg-info " aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item " href="">View Stuff</a>
+                                        <a class="dropdown-item " href="studviewplaced.php">Placed Data</a>
                                      
                                         <a class="dropdown-item " href="companyregister.php">Register Events</a>
-                                        <a class="dropdown-item " href="">Add Questions</a>
+                                        <a class="dropdown-item " href="interviewqsns.php">Add Questions</a>
 
                                     
                                     </div>
@@ -72,10 +74,10 @@
                                 
                                 <li class="nav-item dropdown ">
                                     <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                         My Account
+                                         Account
                                     </a>
                                     <div class="dropdown-menu bg-info " aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item " href="dashboard.php">Edit Details</a>
+                                        <a class="dropdown-item " href="dashboard.php">My Account</a>
                                         <a class="dropdown-item " href="logout.php">Log Out</a>
                                     
                                     </div>
@@ -95,7 +97,7 @@
                                     </a>
                                     <div class="dropdown-menu bg-info " aria-labelledby="navbarDropdown">
                                         <a class="dropdown-item " href="page.php">View Stuff</a>
-                                        <a class="dropdown-item " href="adminviewstuff.php">View Stuff 2</a>
+                                        <a class="dropdown-item " href="adminviewplacedstuds.php">Placed Data</a>
                                         <a class="dropdown-item " href="company.php">Add Company</a>
                                         <a class="dropdown-item " href="">Add Events</a>
                                     
@@ -105,10 +107,10 @@
                                 
                                 <li class="nav-item dropdown ">
                                     <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                         My Account 
+                                       Account 
                                     </a>
                                     <div class="dropdown-menu bg-info " aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item " href="adminaccount.php">Edit Details</a>
+                                        <a class="dropdown-item " href="adminaccount.php"> My Account </a>
                                         <a class="dropdown-item " href="adminlogout.php">Log Out</a>
                                     
                                     </div>

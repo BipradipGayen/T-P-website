@@ -83,9 +83,9 @@
     {
     
         $email=mysqli_real_escape_string($con,$_POST['email']);
-        $npwd=mysqli_real_escape_string($con,$_POST['new_password']);
+        $npwd=md5(mysqli_real_escape_string($con,$_POST['new_password']));
 
-        $cpwd=mysqli_real_escape_string($con,$_POST['confirm_password']);
+        $cpwd=md5(mysqli_real_escape_string($con,$_POST['confirm_password']));
         $token=mysqli_real_escape_string($con,$_POST['password_token']);
         if(!empty($token))
         {

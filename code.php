@@ -43,27 +43,41 @@
     if(isset($_POST['register_btn']))
     {
         $name=$_POST['name'];
-       
+        $rl=$_POST['rl'];
+        $cid=$_POST['cid'];
         $email=$_POST['email'];
         $phon=$_POST['phon'];
         $gender=$_POST['gender'];
         $pswd=$_POST['pswd'];
         $verify_token=md5(rand());//function to produce random number and alphabets
-        
-
-
         $check_email_query= "SELECT * FROM student WHERE email='$email' ";
         $check_email_query_run=mysqli_query($con,$check_email_query);
         $emailcount=mysqli_num_rows($check_email_query_run);
      
-            if($emailcount>0)
+        if($emailcount>0)
+        {
+            $_SESSION['status']="Email id already Exists";
+            header("Location: register.php");
+        }
+        else{
+    
+            $img=$_FILES['file'];
+            
+            $filename=$img['name'];
+            //print_r($filename);
+            $fileerror=$img['error'];
+            $filetmp=$img['tmp_name'];
+            $fileext=explode('.',$filename);
+            $filecheck=strtolower((end($fileext)));
+            $fileextstored=array('png','jpg','jpeg');
+            if(in_array($filecheck,$fileextstored))
             {
-                $_SESSION['status']="Email id already Exists";
-                header("Location: register.php");
-            }
-            else{
-                //insert user  or registered users data
-                $query="INSERT INTO `student`(`name`, `email`, `phn`, `gender`, `password`, `verify_token`) VALUES  ('$name','$email','$phon','$gender','$pswd','$verify_token')";
+                $destintaion='upload/student/.'.$filename;
+                move_uploaded_file($filetmp,$destintaion);
+                 //insert user  or registered users data
+                $query="INSERT INTO `student`(`rl_no`, `c_id`,`name`, `email`, `phn`,
+                 `gender`, `password`, `verify_token`,`fname`, `img`) VALUES  ('$rl','$cid','$name','$email','$phon',
+                 '$gender','$pswd','$verify_token','$filename','$destintaion')";
                 $query_run=mysqli_query($con,$query);
                 if($query_run)
                     {
@@ -75,9 +89,13 @@
                         $_SESSION['status']="Registration Failed ";
                         header("Location: register.php");
                     }
-                
-                
             }
+            else{
+                $_SESSION['status']="Image upload Failed...upload only jpg/jpeg/png images";
+                header("Location: register.php");
+            }
+           
+        }
        
 
         
@@ -88,31 +106,45 @@
     if(isset($_POST['add_user']))
     {
         
-        $cpswd=$_POST['cpswd'];
-        $pswd=$_POST['pswd'];
+        $cpswd=md5($_POST['cpswd']);
+        $pswd=md5($_POST['pswd']);
         if($cpswd===$pswd)
         {
             $name=$_POST['name'];
+            $rl=$_POST['rl'];
+            $cid=$_POST['cid'];
             $email=$_POST['email'];
             $phon=$_POST['phon'];
             $gender=$_POST['gender'];
             $verify_token=md5(rand());//function to produce random number and alphabets
-            
-
-
             $check_email_query= "SELECT * FROM student WHERE email='$email' ";
             $check_email_query_run=mysqli_query($con,$check_email_query);
             $emailcount=mysqli_num_rows($check_email_query_run);
+            if($emailcount>0)
+            {
+                $_SESSION['status']="Email id already Exists";
+                header("Location: page.php");
+            }
+            else{
+                //insert user  or registered users data
+                $img=$_FILES['file'];
         
-                if($emailcount>0)
+                $filename=$img['name'];
+                //print_r($filename);
+                $fileerror=$img['error'];
+                $filetmp=$img['tmp_name'];
+                $fileext=explode('.',$filename);
+                $filecheck=strtolower((end($fileext)));
+                $fileextstored=array('png','jpg','jpeg');
+                if(in_array($filecheck,$fileextstored))
                 {
-                    $_SESSION['status']="Email id already Exists";
-                    header("Location: page.php");
-                }
-                else{
-                    //insert user  or registered users data
-                    $query="INSERT INTO `student`(`name`, `email`, `phn`, `gender`, `password`, `verify_token`) VALUES  ('$name','$email','$phon','$gender','$pswd','$verify_token')";
-                    $query_run=mysqli_query($con,$query);
+                    $destintaion='upload/student/.'.$filename;
+                    move_uploaded_file($filetmp,$destintaion);
+                        //insert user  or registered users data
+                    $query="INSERT INTO `student`(`rl_no`, `c_id`,`name`, `email`, `phn`,
+                        `gender`, `password`, `verify_token`,`fname`, `img`) VALUES  ('$rl','$cid','$name','$email','$phon',
+                        '$gender','$pswd','$verify_token','$filename','$destintaion')";   
+                        $query_run=mysqli_query($con,$query);
                     if($query_run)
                     {
                         sendemail_verify("$name","$email","$verify_token");
@@ -123,9 +155,9 @@
                         $_SESSION['status']="Registration Failed ";
                         header("Location: page.php");
                     }
-                    
-                    
                 }
+                
+            }
         }
         else
         {
@@ -142,29 +174,68 @@
     if(isset($_POST['updateuser']))
     {
         
-        $cpswd=$_POST['cpswd'];
-        $pswd=$_POST['pswd'];
+        $cpswd=md5($_POST['cpswd']);
+        $pswd=md5($_POST['pswd']);
         if($cpswd===$pswd)
         {
             $email=$_POST['email'];
-            $user_id=$_POST['user_id'];
+            $old_email=$_POST['em'];
+            $cid=$_POST['cid'];
+            $rlno=$_POST['rlno'];
+            
             $name=$_POST['name'];
             $phon=$_POST['phon'];
             $gender=$_POST['gender'];
             
             $verify_token=md5(rand());//function to produce random number and alphabets
-            
-            $query="UPDATE student SET name='$name',email='$email',phn='$phon',gender='$gender',password='$pswd',verify_token='$verify_token' WHERE sl_no='$user_id' ";
-            $query_run=mysqli_query($con,$query);
-            if($query_run)
+            $new_img=$_FILES['file'];
+            $filename=$new_img['name'];
+            $old_img=$_POST['old_img'];
+            if((file_exists('upload/student/.'.$filename)==FALSE) && ($filename!=''))
             {
-                sendemail_verify("$name","$email","$verify_token");
-                $_SESSION['status']="Update Successfull..!Please ask him/her to verify their email address";
-                header("Location: page.php");
+               //deleting existing image of account and inserting new image
+                $fileerror=$new_img['error'];
+                $filetmp=$new_img['tmp_name'];
+                $fileext=explode('.',$filename);
+                $filecheck=strtolower((end($fileext)));
+                $fileextstored=array('png','jpg','jpeg');
+                if(in_array($filecheck,$fileextstored))
+                {
+                    $destination='upload/student/.'.$filename;
+                    move_uploaded_file($filetmp,$destination);
+                    unlink("upload/student/.".$old_img);
+                    $query="UPDATE student SET fname='$filename',img='$destination' WHERE rl_no='$rlno' ";
+                    $query_run=mysqli_query($con,$query);
+                }
+            }
+            if($old_email==$email)
+            {
+                $query="UPDATE student SET c_id='$cid',name='$name',phn='$phon',gender='$gender',password='$pswd',verify_token='$verify_token',verify_status='1' WHERE rl_no='$rlno' ";
+                $query_run=mysqli_query($con,$query);
+                if($query_run)
+                {
+                    
+                    $_SESSION['status']="Update Successfull..";
+                    header("Location: page.php");
+                }
+                else{
+                    $_SESSION['status']="Update Failed ";
+                    header("Location: page.php");
+                }
             }
             else{
-                $_SESSION['status']="Update Failed ";
-                header("Location: page.php");
+                $query="UPDATE student SET c_id='$cid',name='$name',email='$email',phn='$phon',gender='$gender',password='$pswd',verify_token='$verify_token',verify_status='0' WHERE rl_no='$rlno' ";
+                $query_run=mysqli_query($con,$query);
+                if($query_run)
+                {
+                    sendemail_verify("$name","$email","$verify_token");
+                    $_SESSION['status']="Update Successfull..!Please ask him/her to verify their email address";
+                    header("Location: page.php");
+                }
+                else{
+                    $_SESSION['status']="Update Failed ";
+                    header("Location: page.php");
+                }
             }
         }else{
                 $_SESSION['status']="Password and Confirm Password Donot Match";
@@ -181,7 +252,7 @@
         $user_id=$_POST['delete_id'];
         
         
-        $query="DELETE FROM `student` WHERE sl_no='$user_id'";
+        $query="DELETE FROM `student` WHERE rl_no='$user_id'";
         $query_run=mysqli_query($con,$query);
         if($query_run)
         {
@@ -200,32 +271,70 @@
     //for users to update their own details
     if(isset($_POST['update_details']))
     {
-        $cpswd=$_POST['cpswd'];
-        $pswd=$_POST['pswd'];
+        $cpswd=md5($_POST['cpswd']);
+        $pswd=md5($_POST['pswd']);
         if($cpswd===$pswd)
         {
             $email=$_POST['email'];
-            $user_id=$_POST['user_id'];
+            $old_email=$_POST['em'];
+            $cid=$_POST['cid'];
+            $rlno=$_POST['rlno'];
+            
             $name=$_POST['name'];
             $phon=$_POST['phon'];
             $gender=$_POST['gender'];
             
             $verify_token=md5(rand());//function to produce random number and alphabets
-            
-            $query="UPDATE student SET name='$name',email='$email',phn='$phon',gender='$gender',password='$pswd',verify_token='$verify_token' WHERE sl_no='$user_id' ";
-            $query_run=mysqli_query($con,$query);
-            if($query_run)
+            $new_img=$_FILES['file'];
+            $filename=$new_img['name'];
+            $old_img=$_POST['old_img'];
+            if((file_exists('upload/student/.'.$filename)==FALSE) && ($filename!=''))
             {
-                sendemail_verify("$name","$email","$verify_token");
-                $_SESSION['status']="Update Successfull..!Please verify your email address";
-                header("Location: dashboard.php");
+               //deleting existing image of account and inserting new image
+                $fileerror=$new_img['error'];
+                $filetmp=$new_img['tmp_name'];
+                $fileext=explode('.',$filename);
+                $filecheck=strtolower((end($fileext)));
+                $fileextstored=array('png','jpg','jpeg');
+                if(in_array($filecheck,$fileextstored))
+                {
+                    $destination='upload/student/.'.$filename;
+                    move_uploaded_file($filetmp,$destination);
+                    unlink("upload/student/.".$old_img);
+                    $query="UPDATE student SET fname='$filename',img='$destination' WHERE rl_no='$rlno' ";
+                    $query_run=mysqli_query($con,$query);
+                }
+            }
+            if($old_email==$email)
+            {
+                $query="UPDATE student SET c_id='$cid',name='$name',phn='$phon',gender='$gender',password='$pswd',verify_token='$verify_token',verify_status='1' WHERE rl_no='$rlno' ";
+                $query_run=mysqli_query($con,$query);
+                if($query_run)
+                {
+                    
+                    $_SESSION['status']="Update Successfull..";
+                    header("Location: dashboard.php");
+                }
+                else{
+                    $_SESSION['status']="Update Failed ";
+                    header("Location: dashboard.php");
+                }
             }
             else{
-                $_SESSION['status']="Update Failed ";
-                header("Location: dashboard.php");
+                $query="UPDATE student SET c_id='$cid',name='$name',email='$email',phn='$phon',gender='$gender',password='$pswd',verify_token='$verify_token',verify_status='0' WHERE rl_no='$rlno' ";
+                $query_run=mysqli_query($con,$query);
+                if($query_run)
+                {
+                    sendemail_verify("$name","$email","$verify_token");
+                    $_SESSION['status']="Update Successfull..!Please ask him/her to verify their email address";
+                    header("Location: dashboard.php");
+                }
+                else{
+                    $_SESSION['status']="Update Failed ";
+                    header("Location: dashboard.php");
+                }
             }
-        }
-        else{
+        }else{
                 $_SESSION['status']="Password and Confirm Password Donot Match";
                 header("Location: dashboard.php");
         }

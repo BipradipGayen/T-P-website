@@ -25,19 +25,12 @@
                 
                 ?>
 
-                <div class="card">
-                    <div class="card-header ">
-                        <h4 class="card-title " >
-                            Your Account Details
-                            <a href="adminaccountupdate.php?user_id=<?php echo $_SESSION['auth_user']['slno']; ?>"  class=" btn btn-primary bg-info btn-sm float-right">Edit Details</a>
-                        </h4>
-                    </div>
-                    <div class="card-body">
-                      <?php $slno= $_SESSION['auth_user']['slno'];
+                
+                      <?php $empno= $_SESSION['auth_user']['empno'];
                             
                             include('dbcon.php');
 
-                            $query="SELECT * FROM administrator WHERE sl_no='$slno'";
+                            $query="SELECT * FROM administrator WHERE emp_no='$empno'";
                             $query_run=mysqli_query($con,$query);
                             $query_run_count=mysqli_num_rows($query_run);
                             if($query_run_count > 0)
@@ -45,38 +38,54 @@
                                 foreach($query_run as $row)
                                 {
                                 ?>
-                                    <hr>
-                                        <h5>
-                                            SL NO:&nbsp;<?php echo $row['sl_no'];?>
-                                        </h5>
-                                    </hr>
-                                
-                                    <hr>
-                                        <h5>
-                                            NAME:&nbsp;<?php echo $row['name'];?>
-                                        </h5>
-                                    </hr>
-
-                                    <hr>
-                                        <h5>
-                                           EMAIL ID :&nbsp;<?php echo $row['email'];?>
-                                        </h5>
-                                    </hr>
-                                    <hr>
-                                        <h5>
-                                            PHONE NUMBER:&nbsp;<?php echo $row['phn'];?>
-                                        </h5>
-                                    </hr>
-
-                                    <hr>
-                                        <h5>
-                                           PASSWORD:&nbsp; <?php echo $row['password'];?>
-                                        </h5>
-                                    </hr>
+                                    
+                                <div class="card mb-3 mx-auto bg-warning" style="max-width: 900px; ">
+                                    <div class="row">
+                                        <div class="col-md-4 ">
+                                            <div class="container mb-3 mt-3">
+                                                <img src="<?php echo $row['img'];?>"  class="img-fluid" style="height:400px"  alt="profile picture">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="card-body">
+                                                <br>
+                                                <h4 class="card-title mb-3 mb-3">
+                                                    EMPLOYEE ID:&nbsp;<?php echo $row['emp_no'];?>
+                                                </h4>
+                                            
                                         
                                         
+                                                <h4 class="card-title mb-3 mb-3">
+                                                    NAME:&nbsp;<?php echo $row['name'];?>
+                                                </h4>
+                                            
+
+                                        
+                                                <h4 class="card-title mb-3 mb-3">
+                                                    EMAIL ID :&nbsp;<?php echo $row['email'];?>
+                                                </h4>
+                                            
+                                        
+                                                <h4 class="card-title mb-3 mb-3">
+                                                    PHONE NUMBER:&nbsp;<?php echo $row['phn'];?>
+                                                </h4>
+                                            
+
+                                        
+                                                <h4 class="card-title mb-3 mb-3">
+                                                    PASSWORD:&nbsp; <?php echo $row['password'];?>
+                                                </h4>
+                                            
+                                                <br>
+                                                <div class="text-center">
+                                                    <a href="adminaccountupdate.php?user_id=<?php echo $_SESSION['auth_user']['empno']; ?>"  class=" btn btn-primary bg-info btn-md ">Edit Details</a>
+                                                </div>     
                                
-
+                                            </div>
+                                        </div>
+                                    </div>
+                                 </div>
+                
                                 <?php
                                 }
                             }
@@ -94,13 +103,9 @@
 
             </div>
         </div>
-    </div>
     
-</div>
     <br>
-<br>
-<br>
- 
+
          
 
 

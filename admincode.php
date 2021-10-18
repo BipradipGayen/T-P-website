@@ -37,10 +37,11 @@
         //echo 'Message has been sent';
     }
 
+    //admin self registration
     if(isset($_POST['adminregister_btn']))
     {
         $name=$_POST['name'];
-       
+        $eid=$_POST['eid'];
         $email=$_POST['email'];
         $phon=$_POST['phon'];
         
@@ -53,16 +54,29 @@
         $check_email_query_run=mysqli_query($con,$check_email_query);
         $emailcount=mysqli_num_rows($check_email_query_run);
      
-            if($emailcount>0)
-            {
-                $_SESSION['status']="Email id already Exists";
-                header("Location: adminregister.php");
-            }
-            else{
-                //insert user  or registered users data
-                $query="INSERT INTO `administrator`(`name`, `email`, `phn`, `password`, `verify_token`) VALUES  ('$name','$email','$phon','$pswd','$verify_token')";
-                $query_run=mysqli_query($con,$query);
-                if($query_run)
+        if($emailcount>0)
+        {
+            $_SESSION['status']="Email id already Exists";
+            header("Location: adminregister.php");
+        }
+        else{
+                //inserting image and profile data
+                $img=$_FILES['file'];
+                $filename=$img['name'];
+               //print_r($filename);
+                $fileerror=$img['error'];
+                $filetmp=$img['tmp_name'];
+                $fileext=explode('.',$filename);
+                $filecheck=strtolower((end($fileext)));
+                $fileextstored=array('png','jpg','jpeg');
+                if(in_array($filecheck,$fileextstored))
+                {
+                    $destination='upload/teacher/'.$filename;
+                    move_uploaded_file($filetmp,$destination);
+                    $query="INSERT INTO `administrator`(`emp_no`,`name`, `email`, `phn`, `password`, `verify_token`,`fname`, `img`) 
+                        VALUES  ('$eid','$name','$email','$phon','$pswd','$verify_token','$filename','$destination')";
+                    $query_run=mysqli_query($con,$query);
+                    if($query_run)
                     {
                         sendemail_verify("$name","$email","$verify_token");
                         $_SESSION['status']="Registration Successfull..!Please verify your email address";
@@ -72,47 +86,87 @@
                         $_SESSION['status']="Registration Failed ";
                         header("Location: adminregister.php");
                     }
-                
-                
+                }
+                else{
+                    $_SESSION['status']="Image upload Failed...upload only jpg/jpeg/png images";
+                    header("Location: adminregister.php");
+                }
             }
-       
-
-        
     }
 
 
     //for admins to update their own details
     if(isset($_POST['update_details']))
     {
-        $cpswd=$_POST['cpswd'];
-        $pswd=$_POST['pswd'];
+        $cpswd=md5($_POST['cpswd']);
+        $pswd=md5($_POST['pswd']);
         if($cpswd===$pswd)
         {
             $email=$_POST['email'];
-            $user_id=$_POST['user_id'];
+            $emp=$_POST['emp'];
             $name=$_POST['name'];
             $phon=$_POST['phon'];
-           
-            
+            $old_email=$_POST['em'];
             $verify_token=md5(rand());//function to produce random number and alphabets
+            $new_img=$_FILES['file'];
+            $filename=$new_img['name'];
+            $old_img=$_POST['old_img'];
+            // print_r($filename);
+            // print_r($old_img);
             
-            $query="UPDATE administrator SET name='$name',email='$email',phn='$phon',password='$pswd',verify_token='$verify_token',verify_status='0' WHERE sl_no='$user_id' ";
-            $query_run=mysqli_query($con,$query);
-            if($query_run)
+            if((file_exists('upload/teacher'.$filename)==FALSE) && ($filename!=''))
             {
-                sendemail_verify("$name","$email","$verify_token");
-                $_SESSION['status']="Update Successfull..!Please verify your email address";
-                header("Location: adminaccount.php");
+               //deleting existing image of account and inserting new image
+                $fileerror=$new_img['error'];
+                $filetmp=$new_img['tmp_name'];
+                $fileext=explode('.',$filename);
+                $filecheck=strtolower((end($fileext)));
+                $fileextstored=array('png','jpg','jpeg');
+                if(in_array($filecheck,$fileextstored))
+                {
+                    $destination='upload/teacher/'.$filename;
+                    move_uploaded_file($filetmp,$destination);
+                    unlink("upload/teacher/".$old_img);
+                    $query="UPDATE administrator SET fname='$filename',img='$destination' WHERE emp_no='$emp' ";
+                    $query_run=mysqli_query($con,$query);
+                }
+            }
+
+
+            if($old_email==$email)
+            {
+                $query="UPDATE administrator SET name='$name',phn='$phon',password='$pswd',verify_token='$verify_token',verify_status='1' WHERE emp_no='$emp' ";
+                $query_run=mysqli_query($con,$query);
+                if($query_run)
+                {
+                    
+                    $_SESSION['status']="Update Successfull..";
+                    header("Location: adminaccount.php");
+                }
+                else{
+                    $_SESSION['status']="Update Failed ";
+                    header("Location: adminaccount.php");
+                }
             }
             else{
-                $_SESSION['status']="Update Failed ";
-                header("Location: adminaccount.php");
+                $query="UPDATE administrator SET name='$name',email='$email',phn='$phon',password='$pswd',verify_token='$verify_token',verify_status='0' WHERE emp_no='$emp' ";
+                $query_run=mysqli_query($con,$query);
+                if($query_run)
+                {
+                    sendemail_verify("$name","$email","$verify_token");
+                    $_SESSION['status']="Update Successfull..!Please verify your new email address";
+                    header("Location: adminaccount.php");
+                }
+                else{
+                    $_SESSION['status']="Update Failed ";
+                    header("Location: adminaccount.php");
+                }
             }
         }
         else{
                 $_SESSION['status']="Password and Confirm Password Donot Match";
                 header("Location: adminaccount.php");
-        }
+         }
 
     }
 
@@ -120,18 +174,15 @@
     if(isset($_POST['add_admin']))
     {
         
-        $cpswd=$_POST['cpswd'];
-        $pswd=$_POST['pswd'];
+        $cpswd=md5($_POST['cpswd']);
+        $pswd=md5($_POST['pswd']);
         if($cpswd===$pswd)
         {
             $name=$_POST['name'];
             $email=$_POST['email'];
             $phon=$_POST['phon'];
-            
+            $eid=$_POST['eid'];
             $verify_token=md5(rand());//function to produce random number and alphabets
-            
-
-
             $check_email_query= "SELECT * FROM administrator WHERE email='$email' ";
             $check_email_query_run=mysqli_query($con,$check_email_query);
             $emailcount=mysqli_num_rows($check_email_query_run);
@@ -142,21 +193,37 @@
                 header("Location: page.php");
             }
             else{
-                //insert user  or registered users data
-                $query="INSERT INTO `administrator`(`name`, `email`, `phn`, `password`, `verify_token`) VALUES  ('$name','$email','$phon','$pswd','$verify_token')";
-                $query_run=mysqli_query($con,$query);
-                if($query_run)
+                //inserting image and profile data
+                $img=$_FILES['file'];
+                $filename=$img['name'];
+                //print_r($filename);
+                $fileerror=$img['error'];
+                $filetmp=$img['tmp_name'];
+                $fileext=explode('.',$filename);
+                $filecheck=strtolower((end($fileext)));
+                $fileextstored=array('png','jpg','jpeg');
+                if(in_array($filecheck,$fileextstored))
                 {
-                    sendemail_verify("$name","$email","$verify_token");
-                    $_SESSION['status']="Registration Successfull..!Please ask him/her to verify their email address";
-                    header("Location: page.php");
+                    $destination='upload/teacher/'.$filename;
+                    move_uploaded_file($filetmp,$destination);
+                    $query="INSERT INTO `administrator`(`emp_no`,`name`, `email`, `phn`, `password`, `verify_token`,`fname`, `img`) 
+                        VALUES  ('$eid','$name','$email','$phon','$pswd','$verify_token','$filename','$destination')";
+                    $query_run=mysqli_query($con,$query);
+                    if($query_run)
+                    {
+                        sendemail_verify("$name","$email","$verify_token");
+                        $_SESSION['status']="Registration Successfull..!Please ask him/her to verify their email address";
+                        header("Location: page.php");
+                    }
+                    else{
+                        $_SESSION['status']="Registration Failed ";
+                        header("Location: page.php");
+                    }
                 }
                 else{
-                    $_SESSION['status']="Registration Failed ";
+                    $_SESSION['status']="Image upload Failed...upload only jpg/jpeg/png images";
                     header("Location: page.php");
                 }
-                
-                
             }
         }
         else
@@ -174,7 +241,7 @@
         $user_id=$_POST['delete_id'];
         
         
-        $query="DELETE FROM `administrator` WHERE sl_no='$user_id'";
+        $query="DELETE FROM `administrator` WHERE emp_no='$user_id'";
         $query_run=mysqli_query($con,$query);
         if($query_run)
         {

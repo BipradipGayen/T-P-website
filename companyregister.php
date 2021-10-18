@@ -28,7 +28,7 @@
             </div>
         
             <div class="card">
-                <div class="card-header">
+                <div class="card-header text-center bg-info">
                     <h4 class="card-title">
                         Registered Companies
                     </h4>

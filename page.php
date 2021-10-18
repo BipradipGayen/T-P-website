@@ -3,7 +3,7 @@
     //     session_start(); 
     // } 
     include('adminauthenticate.php');
-    $page_title="View Stuff";
+    $page_title="Registered Students and Admins";
     include('include/header.php');
     include('include/navbar.php'); 
 
@@ -28,7 +28,7 @@
             </div>
         
             <div class="card">
-                <div class="card-header">
+                <div class="card-header text-center">
                     <h4 class="card-title">
                         Registered Students
                         <a href="" data-toggle="modal" data-target="#NameModal" class=" btn btn-primary bg-info btn-sm float-right">Add User</a>
@@ -37,34 +37,41 @@
                 <div class="card-body">
 
                     <div class="table-responsive">
-                        <table class=" table table-bordered table-hover">
-                        <thead class="thead-dark">
-                            <tr >
-                            
-                                <th scope="col">Sl_No</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Email ID</th>
-                                <th scope="col">Phone</th>
-                                <th scope="col">Gender</th>
-                                <th scope="col">Password</th>
-                                <th scope="col">Action</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
+                        
+                        <?php 
                                 include('dbcon.php');
 
                                 $query="SELECT * FROM student";
                                 $query_run=mysqli_query($con,$query);
                                 $query_run_count=mysqli_num_rows($query_run);
                                 if($query_run_count > 0)
+                                {?>
+                                <table class=" table table-bordered table-hover text-center">
+                                <thead class="thead-dark">
+                                        <tr >
+                                        
+                                            <th scope="col">Roll No</th>
+                                            <th scope="col">College ID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email ID</th>
+                                            <th scope="col">Phone</th>
+                                            <th scope="col">Gender</th>
+                                            <th scope="col">Password</th>
+                                            <th scope="col">Profile Picture</th>
+                                            <th scope="col">Action</th>
+
+                                        </tr>
+                                    </thead>
+                                <?php    foreach($query_run as $row)
                                 {
-                                    foreach($query_run as $row)
-                                    {
-                                       ?>
-                                       <tr>
-                                            <td><?php echo $row['sl_no'];?></td>
+                                ?>
+                                    
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td><?php echo $row['rl_no'];?></td>
+
+                                            <td><?php echo $row['c_id'];?></td>
                                        
                                             <td><?php echo $row['name'];?></td>
                                        
@@ -75,10 +82,13 @@
                                             <td><?php echo $row['gender'];?></td>
                                        
                                             <td><?php echo $row['password'];?></td>
+
+                                            <td><img src="<?php echo $row['img'];?>" height="100px" width="150px"> </td>
+
                                             
                                             <td>
-                                                <a href="registered-edit.php?user_id=<?php echo $row['sl_no']; ?>" class="btn btn-sm btn-info" >Edit &nbsp;</a>
-                                                <button type="button" value="<?php echo $row['sl_no']; ?>" data-toggle="modal" data-target="#DeleteModal" class="btn btn-sm btn-danger deletebtn" >Delete</button>
+                                                <a href="registered-edit.php?rlno=<?php echo $row['rl_no']; ?>" class="btn btn-sm btn-info" >Edit &nbsp;</a>
+                                                <button type="button" value="<?php echo $row['rl_no']; ?>" data-toggle="modal" data-target="#DeleteModal" class="btn btn-sm btn-danger deletebtn" >Delete</button>
                                             </td>
                                        
                                        </tr>
@@ -121,7 +131,7 @@
             </div>
         
             <div class="card">
-                <div class="card-header">
+                <div class="card-header text-center">
                     <h4 class="card-title">
                         Registered Admins
                         <a href="" data-toggle="modal" data-target="#NameModal1" class=" btn btn-primary bg-info btn-sm float-right">Add Admins</a>
@@ -130,34 +140,39 @@
                 <div class="card-body">
 
                     <div class="table-responsive">
-                        <table class=" table table-bordered table-hover">
-                        <thead class="thead-dark">
-                            <tr >
-                            
-                                <th scope="col">Sl_No</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Email ID</th>
-                                <th scope="col">Phone</th>
-                                
-                                <th scope="col">Password</th>
-                                <th scope="col">Action</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
+                    
+                    <?php 
                                 include('dbcon.php');
 
                                 $query="SELECT * FROM administrator";
                                 $query_run=mysqli_query($con,$query);
                                 $query_run_count=mysqli_num_rows($query_run);
                                 if($query_run_count > 0)
-                                {
-                                    foreach($query_run as $row)
+                                {?>
+                                    <table class=" table table-bordered table-hover text-center">
+                                        <thead class="thead-dark">
+                                            <tr >
+                                    
+                                                <th scope="col">Employee ID</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Email ID</th>
+                                                <th scope="col">Phone</th>
+                                                <th scope="col" >Password</th>
+                                                <th scope="col" >Profile Picture</th>
+                                                <th scope="col">Action</th>
+
+                                            </tr>
+                                        </thead>
+                                    <?php foreach($query_run as $row)
                                     {
                                        ?>
+                        
+                        
+                            
+                        <tbody>
+                            
                                        <tr>
-                                            <td><?php echo $row['sl_no'];?></td>
+                                            <td><?php echo $row['emp_no'];?></td>
                                        
                                             <td><?php echo $row['name'];?></td>
                                        
@@ -166,15 +181,18 @@
                                             <td><?php echo $row['phn'];?></td>
                                       
                                             <td><?php echo $row['password'];?></td>
+
+                                            <td><img src="<?php echo $row['img'];?>" height="100px" width="100px"> </td>
+
                                             
                                             <td>
                                                 <?php
-                                                    $slno= $_SESSION['auth_user']['slno'];
-                                                    if($slno!=$row['sl_no'])
+                                                    $empno= $_SESSION['auth_user']['empno'];
+                                                    if($empno!=$row['emp_no'])
                                                     {
                                                 ?>
-                                                    <a href="adminaccountupdate.php?user_id=<?php echo $row['sl_no']; ?>" class="btn btn-sm btn-info" >Edit</a> 
-                                                    <button type="button" value="<?php echo $row['sl_no']; ?>" data-toggle="modal" data-target="#DeleteModal1" class="btn btn-sm btn-danger deletebtn1" >Delete</button>
+                                                    <a href="adminaccountupdate.php?user_id=<?php echo $row['emp_no']; ?>" class="btn btn-sm btn-info" >Edit</a> 
+                                                    <button type="button" value="<?php echo $row['emp_no']; ?>" data-toggle="modal" data-target="#DeleteModal1" class="btn btn-sm btn-danger deletebtn1" >Delete</button>
                                                    
                                             <?php } ?>
                                             
@@ -214,7 +232,7 @@
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="code.php" method="POST">
+                <form action="code.php" method="POST" enctype="multipart/form-data">
                    
 
                     <div class="modal-body">
@@ -224,7 +242,19 @@
                                 <div class="valid-feedback">Valid.</div>
                                 <div class="invalid-feedback">Please fill out this field.</div>
                             </div>
-                            
+                            <div class="form-group mb-3">
+                                <label for="rl" class="form-label "> Roll Number:</label>     
+                                <input type="text"  class="form-control"id="rl" name="rl" placeholder="University Roll Number"  required >
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Please fill out this field.</div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="cid"> College ID:</label>     
+                                <input type="text" class="form-control" id="cid" name="cid" placeholder="Enter College ID" required >
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Please fill out this field.</div>
+                            </div>
                             <div class="form-group mb-3">
                                 <label for="email">Email:</label>
                                 <input type="email" class="form-control" id="email" placeholder="Enter Email" required name="email" >(Hint.This will be used as Username for LogIn)
@@ -241,10 +271,13 @@
                             <div class="form-group mb-3">
                                 <label for="gender">Enter your Gender:</label>&nbsp;&nbsp;
                                 <input type="text" id="gender" name="gender" placeholder="Male/Female/Others" required >
-                            
                                 <div class="valid-feedback">Valid.</div>
                                 <div class="invalid-feedback">Please fill out this field.</div>
                             </div> 
+                            <div class="form-group mb-3 ">
+                                <label for="img">Profile Pic:</label>
+                                <input type="file" class="form-control-file border" id="img" name="file">
+                            </div>
                             <div class="form-group mb-3 ">
                                 <label for="pswd">Password:(Minimum 4 characters)</label>
                                 <input type="password" class="form-control" id="pswd" placeholder="Enter password" name="pswd" pattern="[0-9/a-z/A-Z]+" required minlength="4" ><input type="checkbox" onclick="Toggle()">
@@ -271,15 +304,21 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-info">
-                    <h5 class="modal-title " id="exampleModalLabel">Add Admin</h5>
+                    <h5 class="modal-title text-center" id="exampleModalLabel">Add Admin</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="admincode.php" method="POST">
+                <form action="admincode.php" method="POST" enctype="multipart/form-data">
                    
 
                     <div class="modal-body">
+                            <div class="form-group mb-3 ">
+                                <label for="eid"> Employee ID:</label>     
+                                <input type="text" class="form-control" id="eid" name="eid" placeholder="Enter Your Employee Id"  required >
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Please fill out this field.</div>
+                            </div>
                             <div class="form-group mb-3 ">
                                 <label for="name"> Name:</label>     
                                 <input type="text" class="form-control" id="name" placeholder="Enter Your Name" name="name" required >
@@ -300,7 +339,10 @@
                                 <div class="valid-feedback">Valid.</div>
                                 <div class="invalid-feedback">Please fill out this field.</div>
                             </div>   
-                           
+                            <div class="form-group mb-3 ">
+                                <label for="img">Profile Pic:</label>
+                                <input type="file" class="form-control-file border" id="img" name="file">
+                            </div>
                             <div class="form-group mb-3 ">
                                 <label for="pswd1">Password:(Minimum 4 characters)</label>
                                 <input type="password" class="form-control" id="pswd1" placeholder="Enter password" name="pswd" pattern="[0-9/a-z/A-Z]+" required minlength="4" ><input type="checkbox" onclick="Toggle1()">

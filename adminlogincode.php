@@ -4,7 +4,7 @@
     if(isset($_POST['admin_login_now_btn']))
     {
         $email=mysqli_real_escape_string($con,$_POST['email']) ;
-        $pswd=mysqli_real_escape_string($con,$_POST['pswd']) ;
+        $pswd=md5($_POST['pswd']);
         $login_query="SELECT * FROM administrator WHERE email='$email' AND password='$pswd' LIMIT 1";
         $login_query_run=mysqli_query($con,$login_query);
         $logincount=mysqli_num_rows($login_query_run);
@@ -15,7 +15,7 @@
             {
                 $_SESSION['authenticated_admin']=TRUE;
                 $_SESSION['auth_user']=[
-                    'slno'=>$row['sl_no']
+                    'empno'=>$row['emp_no']
                 ];
                 $_SESSION['status']="You are Logged In Successfully";
                 header("Location: adminaccount.php");

@@ -1,6 +1,42 @@
 <?php
     session_start();
     include('dbcon.php');
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\SMTP;
+    use PHPMailer\PHPMailer\Exception;
+    //Load Composer's autoloader
+    require 'vendor/autoload.php';
+
+    function sendemail_notify($email,$name)
+    {
+        //Instantiation and passing `true` enables exceptions
+        $mail = new PHPMailer(true);
+        $mail->isSMTP(); 
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+
+        $mail->Host       = "smtp.gmail.com";                     //Set the SMTP server to send through
+        $mail->Username   = "dummyforphp26@gmail.com";                     //SMTP username
+        $mail->Password   = "Iamraju98@00";                               //SMTP password
+        $mail->SMTPSecure = "tls";         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+        $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+        //Recipients
+        $mail->setFrom("dummyforphp26@gmail.com","Department Of Information Technology");
+        $mail->addAddress($email);     //Add a recipient
+         //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = "Company Registration Notification from IT T&P";
+        $email_template="
+                    <h2>$name has started the Recruitment Process.</h2>
+                    <h4>Please visit the Portal if you want to register for it and fill before the last day.</h4>
+                   ";
+        
+                   
+        $mail->Body    = $email_template;
+        $mail->send();
+        //echo 'Message has been sent';
+    }
+
+    //adding of company by user
     if(isset($_POST['add_company']))
     {
         $name=$_POST['name'];
@@ -20,40 +56,40 @@
         $query_run=mysqli_query($con,$query);
         if($query_run)
         {
-            // mysqli_select_db($con,$dbname);
+
+            $sq = "CREATE TABLE `".$name."`(
+                ID INT(100) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                NAME VARCHAR(50) NOT NULL,
+                UNIVERSITY_ROLL VARCHAR(15) NOT NULL,
+                EMAIL VARCHAR(50) NOT NULL,
+                GENDER VARCHAR(8) NOT NULL,
+                CLASS_10 FLOAT(5) NOT NULL,
+                CLASS_12 FLOAT(5) NOT NULL,
+                BTECH FLOAT(5) NOT NULL,
+                DESIGNATION VARCHAR(20) NOT NULL
+                )";
+            $sq_run=mysqli_query($con,$sq);  
+            $eml_query="SELECT * FROM student WHERE verify_status='1'";
+            $eml_query_run=mysqli_query($con,$eml_query);
+            $eml_query_run_count=mysqli_num_rows($eml_query_run);
+            if($eml_query_run_count > 0)
+            {
+                foreach($eml_query_run as $row)
+                {  
+                    sendemail_notify($row['email'],$name);
+                }
+            }
 
 
-            // //Code to see if Table Exists
-            // $exists="SELECT 1 from $name";
-            // $exists_run = mysqli_query($con,$exists);
-            
-            // $existcount=mysqli_num_rows($exists_run);
-            
-            // if($existcount>0)
-            // {
-            //     $_SESSION['status']="Company already registered";
-            //     header("Location: company.php");
-            // }
-            // else{
+            if ($sq_run ) {
 
-                $sq = "CREATE TABLE `".$name."`(
-                    ID INT(100) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    NAME VARCHAR(50) NOT NULL,
-                    UNIVERSITY_ROLL VARCHAR(15) NOT NULL,
-                    EMAIL VARCHAR(50) NOT NULL,
-                    GENDER VARCHAR(8) NOT NULL,
-                    CLASS_10 FLOAT(5) NOT NULL,
-                    CLASS_12 FLOAT(5) NOT NULL,
-                    BTECH FLOAT(5) NOT NULL,
-                    DESIGNATION VARCHAR(20) NOT NULL
-                    )";
-                // $sql_run=mysqli_query($con,$sql);    
-                if (mysqli_query($con,$sq)) {
-                    $_SESSION['status']="Company added Successfully and corressponding company table created successfully";
-                    header("Location: company.php");
-                } else {
-                    $_SESSION['status']="Company added Successfully but corressponding company table creation failed";
-                    header("Location: company.php");                }
+                $_SESSION['status']="Company added Successfully,corressponding company table created successfully,Students have been notified via mail successfully";
+                header("Location: company.php");
+            }
+            else{
+                $_SESSION['status']="Company added Successfully but corressponding company table creation failed";
+                header("Location: company.php");     
+            }
             
             
             
@@ -68,6 +104,8 @@
         
     }
 
+
+    //students registering for company
     if(isset($_POST['stud_comp_register']))
     {
         $cmpname=$_POST['compname'];
@@ -116,6 +154,36 @@
                     header("Location: companyregister.php");
             }
                 
+        }
+    }
+
+    //remove company
+    if(isset($_POST['delete_company']))
+    {
+        $user_id=$_POST['delete_id'];
+        $name=$_POST['delete_name'];
+        // print_r($user_id);
+        // print_r($name);
+        $sql="DROP TABLE `".$name."`";
+        $sql_run=mysqli_query($con,$sql);
+        if($sql_run)
+        {
+            $query="DELETE FROM `company` WHERE sl_no='$user_id'";
+            $query_run=mysqli_query($con,$query);
+            if($query_run)
+            {
+                
+                $_SESSION['status']="Company Deleted Succcessfully";
+                header("Location: company.php");
+            }
+            else{
+                $_SESSION['status']="Couldn't Delete";
+                header("Location: company.php");
+            }
+        }
+        else{
+                $_SESSION['status']="Couldn't Delete";
+                header("Location: company.php");
         }
     }
 

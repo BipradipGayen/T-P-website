@@ -4,7 +4,7 @@
     if(isset($_POST['login_now_btn']))
     {
         $email=mysqli_real_escape_string($con,$_POST['email']) ;
-        $pswd=mysqli_real_escape_string($con,$_POST['pswd']) ;
+        $pswd=md5(mysqli_real_escape_string($con,$_POST['pswd'])) ;
         $login_query="SELECT * FROM student WHERE email='$email' AND password='$pswd' LIMIT 1";
         $login_query_run=mysqli_query($con,$login_query);
         $logincount=mysqli_num_rows($login_query_run);
@@ -16,7 +16,7 @@
             {
                 $_SESSION['authenticated']=TRUE;
                 $_SESSION['auth_user']=[
-                    'slno'=>$row['sl_no']
+                    'rlno'=>$row['rl_no']
                     // 'email'=>$row['email'],
                     // 'phn'=>$row['phn']
                     
